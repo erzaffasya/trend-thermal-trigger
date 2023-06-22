@@ -1,11 +1,7 @@
 
-import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
 import java.awt.print.Printable;
 import java.awt.print.PrinterJob;
-import java.util.HashMap;
-import java.util.Map;
-import java.awt.image.BufferedImage;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.attribute.HashPrintRequestAttributeSet;
@@ -26,6 +22,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,13 +32,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.imageio.ImageIO;
 
 public class PrintThermal extends JFrame {
 
+    private Integer line;
+    private Integer linePending;
+    private Integer width;
+    private Integer height;
+    private Font font;
+    
     private JComboBox<String> printerComboBox;
     private JTextField textField;
     private String selectedPrinter;
     private String nomorPenjualan;
+    private Integer idAntrianPrinter;
+    private Character jenis;
     JSONObject dataPenjualan = new JSONObject();
     JSONObject dataPerusahaan = new JSONObject();
     JSONArray dataPenjualanDetail = new JSONArray();
@@ -48,6 +55,37 @@ public class PrintThermal extends JFrame {
     Graphics2D g2d;
     private BufferedImage img = null;
 
+    public void deleteAntrian(Integer id) {
+        try {
+            // Create the URL object with the API endpoint
+            URL url = new URL("https://sap.trendvariasi.id/api/antrian-delete/"+id);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                StringBuilder response = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                String jsonResponse = response.toString();
+
+                JSONObject jsonObj = new JSONObject(jsonResponse);
+            } else {
+                System.out.println("HTTP Request Failed with Error Code: " + responseCode);
+            }
+            // Close the connection
+            connection.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    
     public void getAntrian() {
         try {
             // Create the URL object with the API endpoint
@@ -69,7 +107,15 @@ public class PrintThermal extends JFrame {
 
                 JSONObject jsonObj = new JSONObject(jsonResponse);
                 // jsonObj.isEmpty();
+                jenis = null;
+                idAntrianPrinter = null;
                 if (!jsonObj.isEmpty()) {
+                    idAntrianPrinter = jsonObj.getJSONObject("data").getInt("id");
+                    if (jsonObj.getJSONObject("data").getString("jenis").equals('R')) {
+                        jenis = 'R';
+                    } else {
+                        jenis = 'A';
+                    }
                     this.getData(jsonObj.getJSONObject("data").getString("nomor"));
                     System.out.println("Ada Datanya ni");
                 }
@@ -109,7 +155,11 @@ public class PrintThermal extends JFrame {
                 dataPenjualan = jsonArray.getJSONObject("data");
                 dataPerusahaan = jsonArray.getJSONObject("perusahaan");
                 dataPenjualanDetail = jsonArray.getJSONArray("detail");
-                this.NotaAll();
+                if (jenis.equals('R')) {
+                    this.printNotaReguler();
+                } else {
+                    this.NotaAll();
+                }
                 // dataPerusahaan.getString("nama");
             } else {
                 System.out.println("HTTP Request Failed with Error Code: " + responseCode);
@@ -172,7 +222,7 @@ public class PrintThermal extends JFrame {
 
                         this.drawText(g2d,
                                 "PELANGGAN : " + dataPenjualan.getString("id_customer") + " - "
-                                        + dataPenjualan.getString("customer"));
+                                + dataPenjualan.getString("customer"));
 
                         this.drawText(g2d, "MOBIL : " + dataPenjualan.getString("mobil") + " - "
                                 + dataPenjualan.getString("nopol"));
@@ -192,10 +242,10 @@ public class PrintThermal extends JFrame {
                             this.drawLeftCenterRight(g2d, "Rp. ",
                                     new java.text.DecimalFormat("#,##0")
                                             .format(dataObj.getDouble("harga")) + "x"
-                                            + dataObj.getDouble("qty"),
+                                    + dataObj.getDouble("qty"),
                                     "Rp. "
-                                            + new java.text.DecimalFormat("#,##0")
-                                                    .format(Double.valueOf(dataObj.getDouble("total"))),
+                                    + new java.text.DecimalFormat("#,##0")
+                                            .format(Double.valueOf(dataObj.getDouble("total"))),
                                     line,
                                     font);
                         }
@@ -221,6 +271,7 @@ public class PrintThermal extends JFrame {
                     }
                 });
                 printerJob.print(attributesSet);
+                this.deleteAntrian(idAntrianPrinter);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -230,23 +281,176 @@ public class PrintThermal extends JFrame {
         }
     }
 
-    public Boolean findPrintService(String printerName) {
-        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+    public void printNotaReguler() {
 
-        for (PrintService printService : printServices) {
-            if (printService.getName().equalsIgnoreCase(printerName)) {
-                service = printService;
-                return true;
+        if (findPrintService("EPSON TM-T82X")) {
+
+            PrintRequestAttributeSet attributesSet = new HashPrintRequestAttributeSet();
+            attributesSet.add(new MediaPrintableArea(0, 0, 80, 297, MediaPrintableArea.MM));
+            attributesSet.add(PrintQuality.HIGH);
+            attributesSet.add(Sides.ONE_SIDED);
+
+            Font font = new Font("Times New Roman", Font.PLAIN, 9);
+
+            try {
+                // Create print job
+                PrinterJob printerJob = PrinterJob.getPrinterJob();
+                printerJob.setPrintService(service);
+                String title = "RINCIAN TRANSAKSI";
+                printerJob.setPrintable((graphics, pageFormat, pageIndex) -> {
+                    if (pageIndex == 0) {
+                        g2d = (Graphics2D) graphics;
+                        width = (int) pageFormat.getImageableWidth();
+                        line = 10;
+
+                        Map<TextAttribute, Object> attributes = new HashMap<>();
+                        attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+                        Font fontFormat = new Font("Times New Roman", Font.PLAIN, 12);
+                        Font fontSubTitleFormat = new Font("Times New Roman", Font.PLAIN, 9);
+                        Font fontTitle = fontFormat.deriveFont(attributes);
+                        Font fontSubTitle = fontSubTitleFormat.deriveFont(attributes);
+                        Font fontBoldFormat = new Font("Times New Roman", Font.PLAIN, 9);
+                        Font fontBold = fontBoldFormat.deriveFont(attributes);
+
+                        try {
+                            img = ImageIO.read(new File(
+                                    "C:\\laragon\\www\\trendvariasi\\src\\main\\resources\\static\\img\\Logo_Hitam.png"));
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+                        int maxWidth = 130; // Set the maximum width
+
+                        // Calculate the scaled dimensions based on the maximum width while maintaining
+                        // the aspect ratio
+                        int originalWidth = img.getWidth();
+                        int originalHeight = img.getHeight();
+
+                        int scaledWidth = maxWidth;
+                        int scaledHeight = (int) (((double) scaledWidth / originalWidth) * originalHeight);
+
+                        // Draw the scaled image
+                        g2d.drawImage(img, 35, line, scaledWidth, scaledHeight, null);
+
+                        line = line + scaledHeight + 10;
+
+                        this.drawText(g2d, dataPerusahaan.getString("alamat"), "center");
+                        this.drawText(g2d, dataPerusahaan.getString("no_hp"), "center");
+
+                        this.dash(g2d);
+
+                        this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
+                                .format(new Date()), new SimpleDateFormat("hh:mm:ss").format(new Date()),
+                                line, font);
+
+                        this.dash(g2d);
+
+                        this.drawText(g2d, "PELANGGAN : " + dataPenjualan.getString("id_customer") + " - " + dataPenjualan.getString("customer"));
+
+                        this.drawText(g2d, "MOBIL     : " + dataPenjualan.getString("mobil") + " - " + dataPenjualan.getString("nopol"));
+
+                        this.dash(g2d);
+
+                        this.drawLeftRight(g2d, dataPenjualan.getString("rincian_transaksi"), dataPenjualan.getString("pegawai"),
+                                line, font);
+
+                        this.dash(g2d);
+
+                        for (int i = 0; i < dataPenjualanDetail.length(); i++) {
+                            JSONObject dataObj = new JSONObject(dataPenjualanDetail.get(i).toString());
+
+                            this.drawText(g2d, dataObj.getString("id_barang") + " " + dataObj.getString("nama_barang"));
+
+                            this.drawLeftCenterRight(g2d, "Rp. ",
+                                    new java.text.DecimalFormat("#,##0")
+                                            .format(dataObj.getDouble("harga")) + "x"
+                                    + dataObj.getDouble("qty"),
+                                    "Rp. "
+                                    + new java.text.DecimalFormat("#,##0")
+                                            .format(Double.valueOf(dataObj.getDouble("total"))),
+                                    line,
+                                    font);
+
+                            line = line + 10;
+                        }
+                        this.dash(g2d);
+
+                        this.drawLeftRight(g2d, "SUBTOTAL", new java.text.DecimalFormat("Rp #,##0")
+                                .format(dataPenjualan.getDouble("total")),
+                                line, font);
+                        line = line + 5;
+
+                        this.drawLeftRight(g2d, "DISKON", new java.text.DecimalFormat("Rp #,##0")
+                                .format(dataPenjualan.getDouble("total_discount")),
+                                line, font);
+                        line = line + 5;
+
+                        this.drawLeftRight(g2d, "TOTAL", new java.text.DecimalFormat("Rp #,##0")
+                                .format(dataPenjualan.getDouble("grandtotal")),
+                                line, fontBold);
+
+//                        if (serviceThermal.getTipe_pembayaran() != null
+//                                && serviceThermal.getTipe_pembayaran() == true) {
+//
+//                            if (serviceThermal.getNominal_tunai().intValue() > 0) {
+//                                serviceThermal.drawLeftRight(g2d, "Tunai", new java.text.DecimalFormat("Rp #,##0")
+//                                        .format(Double.valueOf(serviceThermal.getNominal_tunai().toString())),
+//                                        serviceThermal.getLine(), fontBold);
+//                            }
+//
+//                            if (serviceThermal.getNominal_transfer().intValue() > 0) {
+//                                serviceThermal.drawLeftRight(g2d, "Transfer", new java.text.DecimalFormat("Rp #,##0")
+//                                        .format(Double.valueOf(serviceThermal.getNominal_transfer().toString())),
+//                                        serviceThermal.getLine(), fontBold);
+//                            }
+//
+//                            if (serviceThermal.getNominal_debit().intValue() > 0) {
+//                                serviceThermal.drawLeftRight(g2d, "Debit", new java.text.DecimalFormat("Rp #,##0")
+//                                        .format(Double.valueOf(serviceThermal.getNominal_debit().toString())),
+//                                        serviceThermal.getLine(), fontBold);
+//                            }
+//
+//                            if (serviceThermal.getNominal_tunai().intValue() > 0
+//                                    && serviceThermal.getNominal_transfer().intValue() < 1
+//                                    && serviceThermal.getNominal_debit().intValue() < 1) {
+//                                String jumlahNominal = serviceThermal.getNominal_tunai()
+//                                        .subtract(BigDecimal.valueOf(penjualan.getTotal())).toString();
+//                                serviceThermal.drawLeftRight(g2d, "Kembalian",
+//                                        new java.text.DecimalFormat("Rp #,##0").format(Double.valueOf(jumlahNominal)),
+//                                        serviceThermal.getLine(), fontBold);
+//                            }
+//                        }
+                        line = line + 20;
+                        this.drawTextJustify(g2d,
+                                "BARANG");
+                        line = line + 13;
+                        this.drawTextJustify2(g2d,
+                                "BARANG");
+
+                        line = line + 10;
+                        this.drawText(g2d, "Rekening Bank :");
+                        this.drawText(g2d, "Mandiri No. Rek. 149.000.888.7897");
+                        this.drawText(g2d, "BCA     No. Rek. 191.019.7769");
+                        this.drawText(g2d, "an. Sutejo Norton");
+
+                        line = line + 30;
+                        this.drawText(g2d, "TERIMA KASIH ATAS PEMBELIAN ANDA", "center", fontBold);
+
+                        return Printable.PAGE_EXISTS;
+                    } else {
+                        return Printable.NO_SUCH_PAGE;
+                    }
+                });
+                printerJob.print(attributesSet);
+                this.deleteAntrian(idAntrianPrinter);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        } else {
+            System.out.println("Printer not found.");
         }
-        return false;
     }
-
-    private Integer line;
-    private Integer linePending;
-    private Integer width;
-    private Integer height;
-    private Font font;
 
     public void drawText(Graphics g, String text, String align, Integer l, Font font) {
 
@@ -782,8 +986,19 @@ public class PrintThermal extends JFrame {
         });
     }
 
+    public Boolean findPrintService(String printerName) {
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+
+        for (PrintService printService : printServices) {
+            if (printService.getName().equalsIgnoreCase(printerName)) {
+                service = printService;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void functionToExecute() {
-        // Implement your desired function here
         this.getAntrian();
         System.out.println("Executing the function...");
     }
@@ -805,40 +1020,41 @@ public class PrintThermal extends JFrame {
             printerComboBox.addItem(printer.getName());
         }
 
-        // Create a text field
-        textField = new JTextField();
-        textField.setColumns(20);
 
         // Create a button to print
         JButton printButton = new JButton("Print");
+        JButton printAutoButton = new JButton("Start Auto Print");
+        JButton printStopButton = new JButton("Stop Auto Print");
         printButton.addActionListener(e -> {
             selectedPrinter = (String) printerComboBox.getSelectedItem();
-            // this.getData();
-            // this.NotaAll();
-            String value = textField.getText();
-            System.out.println("Selected printer: " + selectedPrinter + value);
-            // TODO: Implement printing logic using the selected printer
-
             this.getAntrian();
-            // Timer timer = new Timer();
+        });
+        
+        Timer timer = new Timer();
+        printAutoButton.addActionListener(e -> {
+            selectedPrinter = (String) printerComboBox.getSelectedItem();
 
-            // TimerTask task = new TimerTask() {
-            // @Override
-            // public void run() {
-            // // Call your function or perform the desired task here
-            // functionToExecute();
-            // }
-            // };
+             TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    functionToExecute();
+                }
+             };
+             timer.schedule(task, 0, 5000);
+        });
+        printStopButton.addActionListener(e -> {
 
-            // Schedule the task to run every 5 seconds
-            // timer.schedule(task, 0, 50000);
+             timer.cancel(); // Stop the timer
+
         });
 
         // Create a panel to hold the components
         JPanel panel = new JPanel();
         panel.add(printerComboBox);
-        panel.add(textField);
+//        panel.add(textField);
         panel.add(printButton);
+        panel.add(printAutoButton);
+        panel.add(printStopButton);
 
         // Add the panel to the frame
         add(panel);
