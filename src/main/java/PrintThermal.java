@@ -52,7 +52,7 @@ public class PrintThermal extends JFrame {
     public void getAntrian() {
         try {
             // Create the URL object with the API endpoint
-            URL url = new URL("http://localhost:8899/api/antrian-printer");
+            URL url = new URL("https://sap.trendvariasi.id/api/antrian-printer");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
@@ -165,9 +165,9 @@ public class PrintThermal extends JFrame {
 
                         this.dash(g2d);
 
-//                        this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
-//                                .format(dataPenjualan.get("tanggal")), new SimpleDateFormat("hh:mm:ss").format(new Date()),
-//                                line, font);
+                        // this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
+                        //         .format(dataPenjualan.getString("tanggal")), new SimpleDateFormat("hh:mm:ss").format(new Date()),
+                        //         line, font);
 
                         this.dash(g2d);
 
