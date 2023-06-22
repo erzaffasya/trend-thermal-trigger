@@ -52,7 +52,7 @@ public class PrintThermal extends JFrame {
     public void getAntrian() {
         try {
             // Create the URL object with the API endpoint
-            URL url = new URL("http://localhost:8899/api/antrian-printer");
+            URL url = new URL("https://sap.trendvariasi.id/api/antrian-printer");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
@@ -124,6 +124,8 @@ public class PrintThermal extends JFrame {
 
      public void NotaAll() {
         System.out.println(selectedPrinter);
+        line = 10;
+        width = 200;
         if (findPrintService(selectedPrinter)) {
 
             PrintRequestAttributeSet attributesSet = new HashPrintRequestAttributeSet();
@@ -163,9 +165,9 @@ public class PrintThermal extends JFrame {
 
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
-                                .format(dataPenjualan.getString("tanggal")), new SimpleDateFormat("hh:mm:ss").format(new Date()),
-                                line, font);
+                        // this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
+                        //         .format(dataPenjualan.getString("tanggal")), new SimpleDateFormat("hh:mm:ss").format(new Date()),
+                        //         line, font);
 
                         this.dash(g2d);
 
@@ -199,17 +201,17 @@ public class PrintThermal extends JFrame {
 //                        this.dash(g2d);
 //
                         this.drawLeftRight(g2d, "SUBTOTAL", new java.text.DecimalFormat("#,##0")
-                                .format(Double.valueOf(dataPenjualan.getString("total"))),
+                                .format(Double.valueOf(dataPenjualan.getDouble("total"))),
                                 line, font);
                         line = line + 5;
 
                         this.drawLeftRight(g2d, "DISKON", new java.text.DecimalFormat("#,##0")
-                                .format(Double.valueOf(dataPenjualan.getString("total_discount"))),
+                                .format(Double.valueOf(dataPenjualan.getDouble("total_discount"))),
                                 line, font);
                         line = line + 5;
 
                         this.drawLeftRight(g2d, "TOTAL", new java.text.DecimalFormat("#,##0")
-                                .format(Double.valueOf(dataPenjualan.getString("grand_total"))),
+                                .format(Double.valueOf(dataPenjualan.getDouble("grandtotal"))),
                                 line, fontBold);
 
                         return Printable.PAGE_EXISTS;
