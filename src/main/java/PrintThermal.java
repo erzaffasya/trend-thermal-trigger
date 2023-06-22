@@ -124,6 +124,8 @@ public class PrintThermal extends JFrame {
 
      public void NotaAll() {
         System.out.println(selectedPrinter);
+        line = 0;
+        width = 200;
         if (findPrintService(selectedPrinter)) {
 
             PrintRequestAttributeSet attributesSet = new HashPrintRequestAttributeSet();
@@ -163,9 +165,9 @@ public class PrintThermal extends JFrame {
 
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
-                                .format(dataPenjualan.getString("tanggal")), new SimpleDateFormat("hh:mm:ss").format(new Date()),
-                                line, font);
+//                        this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
+//                                .format(dataPenjualan.get("tanggal")), new SimpleDateFormat("hh:mm:ss").format(new Date()),
+//                                line, font);
 
                         this.dash(g2d);
 
@@ -180,36 +182,35 @@ public class PrintThermal extends JFrame {
                                 line, font);
 
                         this.dash(g2d);
-//
-//                        for (int i = 0; i < penjualan_detail.size(); i++) {
-//                            PenjualanDetail dataDetail = penjualan_detail.get(i);
-//
-//                            this.drawText(g2d, dataDetail.getId_barang() + " " + dataDetail.getNama_barang());
-//
-//                            this.drawLeftCenterRight(g2d, "Rp. ",
-//                                    new java.text.DecimalFormat("#,##0")
-//                                            .format(Double.valueOf(dataDetail.getHarga().toString())) + "x"
-//                                            + dataDetail.getQty(),
-//                                    "Rp. "
-//                                            + new java.text.DecimalFormat("#,##0")
-//                                                    .format(Double.valueOf(dataDetail.getTotal().toString())),
-//                                    line,
-//                                    font);
-//                        }
-//                        this.dash(g2d);
-//
+
+                        for (int i = 0; i < dataPenjualanDetail.length(); i++) {
+                             JSONObject dataObj = new JSONObject(dataPenjualanDetail.get(i).toString());
+                            this.drawText(g2d, dataObj.getString("id_barang") + " " + dataObj.getString("nama_barang"));
+
+                            this.drawLeftCenterRight(g2d, "Rp. ",
+                                    new java.text.DecimalFormat("#,##0")
+                                            .format(dataObj.getDouble("harga")) + "x"
+                                            + dataObj.getDouble("qty"),
+                                    "Rp. "
+                                            + new java.text.DecimalFormat("#,##0")
+                                                    .format(Double.valueOf(dataObj.getDouble("total"))),
+                                    line,
+                                    font);
+                        }
+                        this.dash(g2d);
+
                         this.drawLeftRight(g2d, "SUBTOTAL", new java.text.DecimalFormat("#,##0")
-                                .format(Double.valueOf(dataPenjualan.getString("total"))),
+                                .format(dataPenjualan.getDouble("total")),
                                 line, font);
                         line = line + 5;
 
                         this.drawLeftRight(g2d, "DISKON", new java.text.DecimalFormat("#,##0")
-                                .format(Double.valueOf(dataPenjualan.getString("total_discount"))),
+                                .format(dataPenjualan.getDouble("total_discount")),
                                 line, font);
                         line = line + 5;
 
                         this.drawLeftRight(g2d, "TOTAL", new java.text.DecimalFormat("#,##0")
-                                .format(Double.valueOf(dataPenjualan.getString("grand_total"))),
+                                .format(dataPenjualan.getDouble("grandtotal")),
                                 line, fontBold);
 
                         return Printable.PAGE_EXISTS;
