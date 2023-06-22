@@ -1,5 +1,4 @@
 
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextAttribute;
 import java.awt.print.Printable;
@@ -69,10 +68,10 @@ public class PrintThermal extends JFrame {
                 String jsonResponse = response.toString();
 
                 JSONObject jsonObj = new JSONObject(jsonResponse);
-//                jsonObj.isEmpty();
-                if(!jsonObj.isEmpty()){
+                // jsonObj.isEmpty();
+                if (!jsonObj.isEmpty()) {
                     this.getData(jsonObj.getJSONObject("data").getString("nomor"));
-                System.out.println("Ada Datanya ni");
+                    System.out.println("Ada Datanya ni");
                 }
                 dataPenjualan = jsonObj.getJSONObject("data");
             } else {
@@ -84,13 +83,13 @@ public class PrintThermal extends JFrame {
             e.printStackTrace();
         }
     }
-    
+
     public void getData(String nomor) {
         try {
             // Create the URL object with the API endpoint
-            
+
             String replacedString = nomor.replace("/", "-");
-            URL url = new URL("https://sap.trendvariasi.id/api/penjualan/"+replacedString);
+            URL url = new URL("https://sap.trendvariasi.id/api/penjualan/" + replacedString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
@@ -111,7 +110,7 @@ public class PrintThermal extends JFrame {
                 dataPerusahaan = jsonArray.getJSONObject("perusahaan");
                 dataPenjualanDetail = jsonArray.getJSONArray("detail");
                 this.NotaAll();
-//                dataPerusahaan.getString("nama");
+                // dataPerusahaan.getString("nama");
             } else {
                 System.out.println("HTTP Request Failed with Error Code: " + responseCode);
             }
@@ -122,10 +121,9 @@ public class PrintThermal extends JFrame {
         }
     }
 
-     public void NotaAll() {
+    public void NotaAll() {
         System.out.println(selectedPrinter);
-        line = 0;
-        width = 200;
+
         if (findPrintService(selectedPrinter)) {
 
             PrintRequestAttributeSet attributesSet = new HashPrintRequestAttributeSet();
@@ -135,7 +133,7 @@ public class PrintThermal extends JFrame {
 
             Font font = new Font("Times New Roman", Font.PLAIN, 9);
 
-//            serviceThermal = new ServiceThermal();
+            // serviceThermal = new ServiceThermal();
             try {
                 // Create print job
                 PrinterJob printerJob = PrinterJob.getPrinterJob();
@@ -145,9 +143,10 @@ public class PrintThermal extends JFrame {
                     if (pageIndex == 0) {
                         g2d = (Graphics2D) graphics;
 
-//                        serviceThermal.setWidth((int) pageFormat.getImageableWidth());
-//                        serviceThermal.setFont(font);
-//                        serviceThermal.setLine(10);
+                        // font = font;
+                        line = 10;
+                        width = (int) pageFormat.getImageableWidth();
+
                         Map<TextAttribute, Object> attributes = new HashMap<>();
                         attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
                         Font fontFormat = new Font("Times New Roman", Font.PLAIN, 12);
@@ -165,26 +164,29 @@ public class PrintThermal extends JFrame {
 
                         this.dash(g2d);
 
-                         this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
-                                 .format(new Date()), new SimpleDateFormat("hh:mm:ss").format(new Date()),
-                                 line, font);
+                        this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
+                                .format(new Date()), new SimpleDateFormat("hh:mm:ss").format(new Date()),
+                                line, font);
 
                         this.dash(g2d);
 
                         this.drawText(g2d,
-                                "PELANGGAN : " + dataPenjualan.getString("id_customer") + " - " + dataPenjualan.getString("customer"));
+                                "PELANGGAN : " + dataPenjualan.getString("id_customer") + " - "
+                                        + dataPenjualan.getString("customer"));
 
-                        this.drawText(g2d, "MOBIL : " + dataPenjualan.getString("mobil") + " - " +  dataPenjualan.getString("nopol"));
+                        this.drawText(g2d, "MOBIL : " + dataPenjualan.getString("mobil") + " - "
+                                + dataPenjualan.getString("nopol"));
 
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, dataPenjualan.getString("rincian_transaksi"), dataPenjualan.getString("pegawai"),
+                        this.drawLeftRight(g2d, dataPenjualan.getString("rincian_transaksi"),
+                                dataPenjualan.getString("pegawai"),
                                 line, font);
 
                         this.dash(g2d);
 
                         for (int i = 0; i < dataPenjualanDetail.length(); i++) {
-                             JSONObject dataObj = new JSONObject(dataPenjualanDetail.get(i).toString());
+                            JSONObject dataObj = new JSONObject(dataPenjualanDetail.get(i).toString());
                             this.drawText(g2d, dataObj.getString("id_barang") + " " + dataObj.getString("nama_barang"));
 
                             this.drawLeftCenterRight(g2d, "Rp. ",
@@ -246,7 +248,6 @@ public class PrintThermal extends JFrame {
     private Integer height;
     private Font font;
 
-  
     public void drawText(Graphics g, String text, String align, Integer l, Font font) {
 
         line = l;
@@ -626,8 +627,8 @@ public class PrintThermal extends JFrame {
                         x += 1; // Add extra space
                         extraSpace--;
                     }
-                }  else {
-                     x += fontMetrics.stringWidth(words[i]) + 10;
+                } else {
+                    x += fontMetrics.stringWidth(words[i]) + 10;
                 }
             }
 
@@ -678,7 +679,7 @@ public class PrintThermal extends JFrame {
                         extraSpace--;
                     }
                 } else {
-                     x += fontMetrics.stringWidth(words[i]) + 10;
+                    x += fontMetrics.stringWidth(words[i]) + 10;
                 }
             }
 
@@ -780,7 +781,7 @@ public class PrintThermal extends JFrame {
             g2d.drawString(val.trim(), x, y);
         });
     }
-    
+
     public void functionToExecute() {
         // Implement your desired function here
         this.getAntrian();
@@ -812,24 +813,25 @@ public class PrintThermal extends JFrame {
         JButton printButton = new JButton("Print");
         printButton.addActionListener(e -> {
             selectedPrinter = (String) printerComboBox.getSelectedItem();
-//            this.getData();
-//            this.NotaAll();
+            // this.getData();
+            // this.NotaAll();
             String value = textField.getText();
             System.out.println("Selected printer: " + selectedPrinter + value);
             // TODO: Implement printing logic using the selected printer
 
-            Timer timer = new Timer();
+            this.getAntrian();
+            // Timer timer = new Timer();
 
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    // Call your function or perform the desired task here
-                    functionToExecute();
-                }
-            };
+            // TimerTask task = new TimerTask() {
+            // @Override
+            // public void run() {
+            // // Call your function or perform the desired task here
+            // functionToExecute();
+            // }
+            // };
 
             // Schedule the task to run every 5 seconds
-            timer.schedule(task, 0, 5000);
+            // timer.schedule(task, 0, 50000);
         });
 
         // Create a panel to hold the components
