@@ -165,9 +165,9 @@ public class PrintThermal extends JFrame {
 
                         this.dash(g2d);
 
-                        // this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
-                        //         .format(dataPenjualan.getString("tanggal")), new SimpleDateFormat("hh:mm:ss").format(new Date()),
-                        //         line, font);
+                         this.drawLeftRight(g2d, new SimpleDateFormat("d MMMM y", new java.util.Locale("id"))
+                                 .format(new Date()), new SimpleDateFormat("hh:mm:ss").format(new Date()),
+                                 line, font);
 
                         this.dash(g2d);
 
