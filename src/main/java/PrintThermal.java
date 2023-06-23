@@ -111,7 +111,7 @@ public class PrintThermal extends JFrame {
                 idAntrianPrinter = null;
                 if (!jsonObj.isEmpty()) {
                     idAntrianPrinter = jsonObj.getJSONObject("data").getInt("id");
-                    if (jsonObj.getJSONObject("data").getString("jenis").equals('R')) {
+                    if (jsonObj.getJSONObject("data").getString("jenis").equals("R")) {
                         jenis = 'R';
                     } else {
                         jenis = 'A';
@@ -282,8 +282,9 @@ public class PrintThermal extends JFrame {
     }
 
     public void printNotaReguler() {
+        System.out.println(selectedPrinter);
 
-        if (findPrintService("EPSON TM-T82X")) {
+        if (findPrintService(selectedPrinter)) {
 
             PrintRequestAttributeSet attributesSet = new HashPrintRequestAttributeSet();
             attributesSet.add(new MediaPrintableArea(0, 0, 80, 297, MediaPrintableArea.MM));
@@ -313,8 +314,8 @@ public class PrintThermal extends JFrame {
                         Font fontBold = fontBoldFormat.deriveFont(attributes);
 
                         try {
-                            img = ImageIO.read(new File(
-                                    "C:\\laragon\\www\\trendvariasi\\src\\main\\resources\\static\\img\\Logo_Hitam.png"));
+                               URL imageUrl = new URL("https://sap.trendvariasi.id/img/Logo_Hitam.png");
+                                        img = ImageIO.read(imageUrl);
                         } catch (IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
