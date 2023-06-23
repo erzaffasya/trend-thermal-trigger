@@ -795,7 +795,8 @@ public class PrintThermal extends JFrame {
         int maxWidth = 200; // Maximum width in pixels
 
         Graphics2D g2d = (Graphics2D) g;
-
+        
+        Font font = new Font("Times New Roman", Font.PLAIN, 9);
         g2d.setFont(font);
         FontMetrics fontMetrics = g2d.getFontMetrics(font);
 
@@ -847,7 +848,8 @@ public class PrintThermal extends JFrame {
         int maxWidth = 200; // Maximum width in pixels
 
         Graphics2D g2d = (Graphics2D) g;
-
+        
+        Font font = new Font("Times New Roman", Font.PLAIN, 9);
         g2d.setFont(font);
         FontMetrics fontMetrics = g2d.getFontMetrics(font);
 
