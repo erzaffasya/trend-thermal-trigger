@@ -251,17 +251,17 @@ public class PrintThermal extends JFrame {
                         }
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, "SUBTOTAL", new java.text.DecimalFormat("#,##0")
+                        this.drawLeftRight(g2d, "SUBTOTAL",  "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(dataPenjualan.getDouble("total")),
                                 line, font);
                         line = line + 5;
 
-                        this.drawLeftRight(g2d, "DISKON", new java.text.DecimalFormat("#,##0")
+                        this.drawLeftRight(g2d, "DISKON",  "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(dataPenjualan.getDouble("total_discount")),
                                 line, font);
                         line = line + 5;
 
-                        this.drawLeftRight(g2d, "TOTAL", new java.text.DecimalFormat("#,##0")
+                        this.drawLeftRight(g2d, "TOTAL", "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(dataPenjualan.getDouble("grandtotal")),
                                 line, fontBold);
 
@@ -377,17 +377,17 @@ public class PrintThermal extends JFrame {
                         }
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, "SUBTOTAL", new java.text.DecimalFormat("Rp #,##0")
+                        this.drawLeftRight(g2d, "SUBTOTAL",  "Rp. " + new java.text.DecimalFormat("Rp #,##0")
                                 .format(dataPenjualan.getDouble("total")),
                                 line, font);
                         line = line + 5;
 
-                        this.drawLeftRight(g2d, "DISKON", new java.text.DecimalFormat("Rp #,##0")
+                        this.drawLeftRight(g2d, "DISKON",  "Rp. " + new java.text.DecimalFormat("Rp #,##0")
                                 .format(dataPenjualan.getDouble("total_discount")),
                                 line, font);
                         line = line + 5;
 
-                        this.drawLeftRight(g2d, "TOTAL", new java.text.DecimalFormat("Rp #,##0")
+                        this.drawLeftRight(g2d, "TOTAL",  "Rp. " + new java.text.DecimalFormat("Rp #,##0")
                                 .format(dataPenjualan.getDouble("grandtotal")),
                                 line, fontBold);
 
@@ -560,7 +560,8 @@ public class PrintThermal extends JFrame {
     public void drawText(Graphics g, String text, String align) {
 
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setFont(font);
+        Font fontSubTitleFormat = new Font("Times New Roman", Font.PLAIN, 9);
+        g2d.setFont(fontSubTitleFormat);
 
         String[] words = text.split(" ");
 
