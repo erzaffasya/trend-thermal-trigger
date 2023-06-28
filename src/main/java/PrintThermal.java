@@ -41,7 +41,7 @@ public class PrintThermal extends JFrame {
     private Integer width;
     private Integer height;
     private Font font;
-    
+
     private JComboBox<String> printerComboBox;
     private JTextField textField;
     private String selectedPrinter;
@@ -58,7 +58,7 @@ public class PrintThermal extends JFrame {
     public void deleteAntrian(Integer id) {
         try {
             // Create the URL object with the API endpoint
-            URL url = new URL("https://sap.trendvariasi.id/api/antrian-delete/"+id);
+            URL url = new URL("https://sap.trendvariasi.id/api/antrian-delete/" + id);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
@@ -85,7 +85,6 @@ public class PrintThermal extends JFrame {
         }
     }
 
-    
     public void getAntrian() {
         try {
             // Create the URL object with the API endpoint
@@ -222,7 +221,7 @@ public class PrintThermal extends JFrame {
 
                         this.drawText(g2d,
                                 "PELANGGAN : " + dataPenjualan.getString("id_customer") + " - "
-                                + dataPenjualan.getString("customer"));
+                                        + dataPenjualan.getString("customer"));
 
                         this.drawText(g2d, "MOBIL : " + dataPenjualan.getString("mobil") + " - "
                                 + dataPenjualan.getString("nopol"));
@@ -242,21 +241,22 @@ public class PrintThermal extends JFrame {
                             this.drawLeftCenterRight(g2d, "Rp. ",
                                     new java.text.DecimalFormat("#,##0")
                                             .format(dataObj.getDouble("harga")) + "x"
-                                    + dataObj.getDouble("qty"),
+                                            + dataObj.getDouble("qty"),
                                     "Rp. "
-                                    + new java.text.DecimalFormat("#,##0")
-                                            .format(Double.valueOf(dataObj.getDouble("total"))),
+                                            + new java.text.DecimalFormat("#,##0")
+                                                    .format(Double.valueOf(dataObj.getDouble("total"))),
                                     line,
                                     font);
+                            line = line + 10;
                         }
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, "SUBTOTAL",  "Rp. " + new java.text.DecimalFormat("#,##0")
+                        this.drawLeftRight(g2d, "SUBTOTAL", "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(dataPenjualan.getDouble("total")),
                                 line, font);
                         line = line + 5;
 
-                        this.drawLeftRight(g2d, "DISKON",  "Rp. " + new java.text.DecimalFormat("#,##0")
+                        this.drawLeftRight(g2d, "DISKON", "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(dataPenjualan.getDouble("total_discount")),
                                 line, font);
                         line = line + 5;
@@ -314,8 +314,8 @@ public class PrintThermal extends JFrame {
                         Font fontBold = fontBoldFormat.deriveFont(attributes);
 
                         try {
-                               URL imageUrl = new URL("https://sap.trendvariasi.id/img/Logo_Hitam.png");
-                                        img = ImageIO.read(imageUrl);
+                            URL imageUrl = new URL("https://sap.trendvariasi.id/img/Logo_Hitam.png");
+                            img = ImageIO.read(imageUrl);
                         } catch (IOException e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -347,13 +347,16 @@ public class PrintThermal extends JFrame {
 
                         this.dash(g2d);
 
-                        this.drawText(g2d, "PELANGGAN : " + dataPenjualan.getString("id_customer") + " - " + dataPenjualan.getString("customer"));
+                        this.drawText(g2d, "PELANGGAN : " + dataPenjualan.getString("id_customer") + " - "
+                                + dataPenjualan.getString("customer"));
 
-                        this.drawText(g2d, "MOBIL     : " + dataPenjualan.getString("mobil") + " - " + dataPenjualan.getString("nopol"));
+                        this.drawText(g2d, "MOBIL     : " + dataPenjualan.getString("mobil") + " - "
+                                + dataPenjualan.getString("nopol"));
 
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, dataPenjualan.getString("rincian_transaksi"), dataPenjualan.getString("pegawai"),
+                        this.drawLeftRight(g2d, dataPenjualan.getString("rincian_transaksi"),
+                                dataPenjualan.getString("pegawai"),
                                 line, font);
 
                         this.dash(g2d);
@@ -366,10 +369,10 @@ public class PrintThermal extends JFrame {
                             this.drawLeftCenterRight(g2d, "Rp. ",
                                     new java.text.DecimalFormat("#,##0")
                                             .format(dataObj.getDouble("harga")) + "x"
-                                    + dataObj.getDouble("qty"),
+                                            + dataObj.getDouble("qty"),
                                     "Rp. "
-                                    + new java.text.DecimalFormat("#,##0")
-                                            .format(Double.valueOf(dataObj.getDouble("total"))),
+                                            + new java.text.DecimalFormat("#,##0")
+                                                    .format(Double.valueOf(dataObj.getDouble("total"))),
                                     line,
                                     font);
 
@@ -377,51 +380,55 @@ public class PrintThermal extends JFrame {
                         }
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, "SUBTOTAL",  "Rp. " + new java.text.DecimalFormat("Rp #,##0")
+                        this.drawLeftRight(g2d, "SUBTOTAL", "Rp. " + new java.text.DecimalFormat("Rp #,##0")
                                 .format(dataPenjualan.getDouble("total")),
                                 line, font);
                         line = line + 5;
 
-                        this.drawLeftRight(g2d, "DISKON",  "Rp. " + new java.text.DecimalFormat("Rp #,##0")
+                        this.drawLeftRight(g2d, "DISKON", "Rp. " + new java.text.DecimalFormat("Rp #,##0")
                                 .format(dataPenjualan.getDouble("total_discount")),
                                 line, font);
                         line = line + 5;
 
-                        this.drawLeftRight(g2d, "TOTAL",  "Rp. " + new java.text.DecimalFormat("Rp #,##0")
+                        this.drawLeftRight(g2d, "TOTAL", "Rp. " + new java.text.DecimalFormat("Rp #,##0")
                                 .format(dataPenjualan.getDouble("grandtotal")),
                                 line, fontBold);
 
-//                        if (serviceThermal.getTipe_pembayaran() != null
-//                                && serviceThermal.getTipe_pembayaran() == true) {
-//
-//                            if (serviceThermal.getNominal_tunai().intValue() > 0) {
-//                                serviceThermal.drawLeftRight(g2d, "Tunai", new java.text.DecimalFormat("Rp #,##0")
-//                                        .format(Double.valueOf(serviceThermal.getNominal_tunai().toString())),
-//                                        serviceThermal.getLine(), fontBold);
-//                            }
-//
-//                            if (serviceThermal.getNominal_transfer().intValue() > 0) {
-//                                serviceThermal.drawLeftRight(g2d, "Transfer", new java.text.DecimalFormat("Rp #,##0")
-//                                        .format(Double.valueOf(serviceThermal.getNominal_transfer().toString())),
-//                                        serviceThermal.getLine(), fontBold);
-//                            }
-//
-//                            if (serviceThermal.getNominal_debit().intValue() > 0) {
-//                                serviceThermal.drawLeftRight(g2d, "Debit", new java.text.DecimalFormat("Rp #,##0")
-//                                        .format(Double.valueOf(serviceThermal.getNominal_debit().toString())),
-//                                        serviceThermal.getLine(), fontBold);
-//                            }
-//
-//                            if (serviceThermal.getNominal_tunai().intValue() > 0
-//                                    && serviceThermal.getNominal_transfer().intValue() < 1
-//                                    && serviceThermal.getNominal_debit().intValue() < 1) {
-//                                String jumlahNominal = serviceThermal.getNominal_tunai()
-//                                        .subtract(BigDecimal.valueOf(penjualan.getTotal())).toString();
-//                                serviceThermal.drawLeftRight(g2d, "Kembalian",
-//                                        new java.text.DecimalFormat("Rp #,##0").format(Double.valueOf(jumlahNominal)),
-//                                        serviceThermal.getLine(), fontBold);
-//                            }
-//                        }
+                        // if (serviceThermal.getTipe_pembayaran() != null
+                        // && serviceThermal.getTipe_pembayaran() == true) {
+                        //
+                        // if (serviceThermal.getNominal_tunai().intValue() > 0) {
+                        // serviceThermal.drawLeftRight(g2d, "Tunai", new java.text.DecimalFormat("Rp
+                        // #,##0")
+                        // .format(Double.valueOf(serviceThermal.getNominal_tunai().toString())),
+                        // serviceThermal.getLine(), fontBold);
+                        // }
+                        //
+                        // if (serviceThermal.getNominal_transfer().intValue() > 0) {
+                        // serviceThermal.drawLeftRight(g2d, "Transfer", new java.text.DecimalFormat("Rp
+                        // #,##0")
+                        // .format(Double.valueOf(serviceThermal.getNominal_transfer().toString())),
+                        // serviceThermal.getLine(), fontBold);
+                        // }
+                        //
+                        // if (serviceThermal.getNominal_debit().intValue() > 0) {
+                        // serviceThermal.drawLeftRight(g2d, "Debit", new java.text.DecimalFormat("Rp
+                        // #,##0")
+                        // .format(Double.valueOf(serviceThermal.getNominal_debit().toString())),
+                        // serviceThermal.getLine(), fontBold);
+                        // }
+                        //
+                        // if (serviceThermal.getNominal_tunai().intValue() > 0
+                        // && serviceThermal.getNominal_transfer().intValue() < 1
+                        // && serviceThermal.getNominal_debit().intValue() < 1) {
+                        // String jumlahNominal = serviceThermal.getNominal_tunai()
+                        // .subtract(BigDecimal.valueOf(penjualan.getTotal())).toString();
+                        // serviceThermal.drawLeftRight(g2d, "Kembalian",
+                        // new java.text.DecimalFormat("Rp
+                        // #,##0").format(Double.valueOf(jumlahNominal)),
+                        // serviceThermal.getLine(), fontBold);
+                        // }
+                        // }
                         line = line + 20;
                         this.drawTextJustify(g2d,
                                 "BARANG");
@@ -796,7 +803,7 @@ public class PrintThermal extends JFrame {
         int maxWidth = 200; // Maximum width in pixels
 
         Graphics2D g2d = (Graphics2D) g;
-        
+
         Font font = new Font("Times New Roman", Font.PLAIN, 9);
         g2d.setFont(font);
         FontMetrics fontMetrics = g2d.getFontMetrics(font);
@@ -849,7 +856,7 @@ public class PrintThermal extends JFrame {
         int maxWidth = 200; // Maximum width in pixels
 
         Graphics2D g2d = (Graphics2D) g;
-        
+
         Font font = new Font("Times New Roman", Font.PLAIN, 9);
         g2d.setFont(font);
         FontMetrics fontMetrics = g2d.getFontMetrics(font);
@@ -1024,7 +1031,6 @@ public class PrintThermal extends JFrame {
             printerComboBox.addItem(printer.getName());
         }
 
-
         // Create a button to print
         JButton printButton = new JButton("Print");
         JButton printAutoButton = new JButton("Start Auto Print");
@@ -1033,29 +1039,29 @@ public class PrintThermal extends JFrame {
             selectedPrinter = (String) printerComboBox.getSelectedItem();
             this.getAntrian();
         });
-        
+
         Timer timer = new Timer();
         printAutoButton.addActionListener(e -> {
             selectedPrinter = (String) printerComboBox.getSelectedItem();
 
-             TimerTask task = new TimerTask() {
+            TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
                     functionToExecute();
                 }
-             };
-             timer.schedule(task, 0, 5000);
+            };
+            timer.schedule(task, 0, 5000);
         });
         printStopButton.addActionListener(e -> {
 
-             timer.cancel(); // Stop the timer
+            timer.cancel(); // Stop the timer
 
         });
 
         // Create a panel to hold the components
         JPanel panel = new JPanel();
         panel.add(printerComboBox);
-//        panel.add(textField);
+        // panel.add(textField);
         panel.add(printButton);
         panel.add(printAutoButton);
         panel.add(printStopButton);
