@@ -410,7 +410,7 @@ public class PrintThermal extends JFrame {
 //                         && serviceThermal.getTipe_pembayaran() == true) {
 //                        
                          if (nominal_tunai != 0) {
-                            this.drawLeftRight(g2d, "Tunai", "Rp. " + new java.text.DecimalFormat("Rp #,##0")
+                            this.drawLeftRight(g2d, "Tunai", "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(nominal_tunai),
                                 line, font);
                             line = line + 5;
@@ -418,21 +418,21 @@ public class PrintThermal extends JFrame {
                          
                          
                          if (nominal_transfer != 0) {
-                            this.drawLeftRight(g2d, "Transfer", "Rp. " + new java.text.DecimalFormat("Rp #,##0")
+                            this.drawLeftRight(g2d, "Transfer", "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(nominal_transfer),
                                 line, font);
                             line = line + 5;
                          }
                          
                          if (nominal_debit != 0) {
-                            this.drawLeftRight(g2d, "Debit", "Rp. " + new java.text.DecimalFormat("Rp #,##0")
+                            this.drawLeftRight(g2d, "Debit", "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(nominal_debit),
                                 line, font);
                             line = line + 5;
                          }
                          
-                         if (nominal_kembalian != 0) {
-                            this.drawLeftRight(g2d, "Kembalian", "Rp. " + new java.text.DecimalFormat("Rp #,##0")
+                         if (nominal_tunai != 0 || nominal_debit != 0 || nominal_transfer != 0) {
+                            this.drawLeftRight(g2d, "Kembalian", "Rp. " + new java.text.DecimalFormat("#,##0")
                                 .format(nominal_kembalian),
                                 line, font);
                             line = line + 5;
