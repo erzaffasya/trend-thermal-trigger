@@ -48,13 +48,12 @@ public class PrintThermal extends JFrame {
     private String nomorPenjualan;
     private Integer idAntrianPrinter;
     private Character jenis;
-    
-    
+
     private Double nominal_tunai;
     private Double nominal_transfer;
     private Double nominal_debit;
     private Double nominal_kembalian;
-    
+
     JSONObject dataPenjualan = new JSONObject();
     JSONObject dataPerusahaan = new JSONObject();
     JSONArray dataPenjualanDetail = new JSONArray();
@@ -366,7 +365,9 @@ public class PrintThermal extends JFrame {
 
                         this.dash(g2d);
 
-                        this.drawLeftRight(g2d, dataPenjualan.getString("rincian_transaksi"),
+                        String convertNomor = removeFirstTwoChars(dataPenjualan.getString("rincian_transaksi"));
+                        
+                        this.drawLeftRight(g2d, convertNomor, "CS : " +
                                 dataPenjualan.getString("pegawai"),
                                 line, font);
 
@@ -406,63 +407,62 @@ public class PrintThermal extends JFrame {
                                 line, fontBold);
                         line = line + 5;
 
-//                         if (serviceThermal.getTipe_pembayaran() != null
-//                         && serviceThermal.getTipe_pembayaran() == true) {
-//                        
-                         if (nominal_tunai != 0) {
+                        // if (serviceThermal.getTipe_pembayaran() != null
+                        // && serviceThermal.getTipe_pembayaran() == true) {
+                        //
+                        if (nominal_tunai != 0) {
                             this.drawLeftRight(g2d, "TUNAI", "Rp. " + new java.text.DecimalFormat("#,##0")
-                                .format(nominal_tunai),
-                                line, font);
+                                    .format(nominal_tunai),
+                                    line, font);
                             line = line + 5;
-                         }
-                         
-                         
-                         if (nominal_transfer != 0) {
+                        }
+
+                        if (nominal_transfer != 0) {
                             this.drawLeftRight(g2d, "TRANSFER", "Rp. " + new java.text.DecimalFormat("#,##0")
-                                .format(nominal_transfer),
-                                line, font);
+                                    .format(nominal_transfer),
+                                    line, font);
                             line = line + 5;
-                         }
-                         
-                         if (nominal_debit != 0) {
+                        }
+
+                        if (nominal_debit != 0) {
                             this.drawLeftRight(g2d, "DEBIT", "Rp. " + new java.text.DecimalFormat("#,##0")
-                                .format(nominal_debit),
-                                line, font);
+                                    .format(nominal_debit),
+                                    line, font);
                             line = line + 5;
-                         }
-                         
-                         if (nominal_tunai != 0 || nominal_debit != 0 || nominal_transfer != 0) {
+                        }
+
+                        if (nominal_tunai != 0 || nominal_debit != 0 || nominal_transfer != 0) {
                             this.drawLeftRight(g2d, "KEMBALIAN", "Rp. " + new java.text.DecimalFormat("#,##0")
-                                .format(nominal_kembalian),
-                                line, font);
+                                    .format(nominal_kembalian),
+                                    line, font);
                             line = line + 5;
-                         }
-//                        
-//                         if (serviceThermal.getNominal_transfer().intValue() > 0) {
-//                         serviceThermal.drawLeftRight(g2d, "Transfer", new java.text.DecimalFormat("Rp
-//                         #,##0")
-//                         .format(Double.valueOf(serviceThermal.getNominal_transfer().toString())),
-//                         serviceThermal.getLine(), fontBold);
-//                         }
-//                        
-//                         if (serviceThermal.getNominal_debit().intValue() > 0) {
-//                         serviceThermal.drawLeftRight(g2d, "Debit", new java.text.DecimalFormat("Rp
-//                         #,##0")
-//                         .format(Double.valueOf(serviceThermal.getNominal_debit().toString())),
-//                         serviceThermal.getLine(), fontBold);
-//                         }
-//                        
-//                         if (serviceThermal.getNominal_tunai().intValue() > 0
-//                         && serviceThermal.getNominal_transfer().intValue() < 1
-//                         && serviceThermal.getNominal_debit().intValue() < 1) {
-//                         String jumlahNominal = serviceThermal.getNominal_tunai()
-//                         .subtract(BigDecimal.valueOf(penjualan.getTotal())).toString();
-//                         serviceThermal.drawLeftRight(g2d, "Kembalian",
-//                         new java.text.DecimalFormat("Rp
-//                         #,##0").format(Double.valueOf(jumlahNominal)),
-//                         serviceThermal.getLine(), fontBold);
-//                         }
-//                         }
+                        }
+                        //
+                        // if (serviceThermal.getNominal_transfer().intValue() > 0) {
+                        // serviceThermal.drawLeftRight(g2d, "Transfer", new java.text.DecimalFormat("Rp
+                        // #,##0")
+                        // .format(Double.valueOf(serviceThermal.getNominal_transfer().toString())),
+                        // serviceThermal.getLine(), fontBold);
+                        // }
+                        //
+                        // if (serviceThermal.getNominal_debit().intValue() > 0) {
+                        // serviceThermal.drawLeftRight(g2d, "Debit", new java.text.DecimalFormat("Rp
+                        // #,##0")
+                        // .format(Double.valueOf(serviceThermal.getNominal_debit().toString())),
+                        // serviceThermal.getLine(), fontBold);
+                        // }
+                        //
+                        // if (serviceThermal.getNominal_tunai().intValue() > 0
+                        // && serviceThermal.getNominal_transfer().intValue() < 1
+                        // && serviceThermal.getNominal_debit().intValue() < 1) {
+                        // String jumlahNominal = serviceThermal.getNominal_tunai()
+                        // .subtract(BigDecimal.valueOf(penjualan.getTotal())).toString();
+                        // serviceThermal.drawLeftRight(g2d, "Kembalian",
+                        // new java.text.DecimalFormat("Rp
+                        // #,##0").format(Double.valueOf(jumlahNominal)),
+                        // serviceThermal.getLine(), fontBold);
+                        // }
+                        // }
                         line = line + 20;
                         this.drawTextJustify(g2d,
                                 "BARANG");
@@ -492,6 +492,13 @@ public class PrintThermal extends JFrame {
         } else {
             System.out.println("Printer not found.");
         }
+    }
+
+    public static String removeFirstTwoChars(String input) {
+        if (input.length() > 2) {
+            return input.substring(2);
+        }
+        return input;
     }
 
     public void drawText(Graphics g, String text, String align, Integer l, Font font) {
